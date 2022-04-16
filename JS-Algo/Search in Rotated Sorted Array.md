@@ -8,16 +8,10 @@ You must write an algorithm with **O(log n)** runtime complexity.
 
 <img width="640" alt="Screen Shot 2021-09-21 at 1 54 38 PM" src="https://user-images.githubusercontent.com/37787994/134246209-45825ebc-a22d-4d51-8d6a-3d2619decb1d.png">
 
+<img width="409" alt="Screen Shot 2021-11-05 at 9 10 56 PM" src="https://user-images.githubusercontent.com/37787994/140597469-a1c3e093-0284-4f43-b492-7d16e8b978fa.png">
 
-Formula: If a sorted array is shifted, if you take the middle, always one side will be sorted. Take the recursion according to that rule.
 
-- 1- take the middle and compare with target, if matches return.
-- 2- if middle is bigger than left side, it means left is sorted
-    - 2a- if [left] < target < [middle] then do recursion with left, middle - 1 (right)
-    - 2b- left side is sorted, but target not in here, search on right side middle + 1 (left), right
-- 3- if middle is less than right side, it means right is sorted
-    - 3a- if [middle] < target < [right] then do recursion with middle + 1 (left), right
-    - 3b- right side is sorted, but target not in here, search on left side left, middle -1 (right)
+
 
 ```Javascript
 /**
@@ -26,32 +20,45 @@ Formula: If a sorted array is shifted, if you take the middle, always one side w
  * @return {number}
  */
 var search = function(nums, target) {
-    let start = 0, end = nums.length - 1;
-    while(start <= end) {
-        let mid = Math.floor((start + end) / 2);
-        if(target === nums[mid]) {
-            return mid;
-        }
-        // if middle is bigger than left side, it means left is sorted, then we check if nums[start] < target < nums[mid]
-        if(nums[start] <= nums[mid]) {
-            if(nums[start] <= target && target <= nums[mid]) {
-                //if so, it means we need to narrow down
-                end = mid - 1;
-            } else {
-                //else, we enlarge the range
-                start = mid + 1;
-            }
-             // if middle is less than right side, it means right is sorted, we can then check if nums[mid] < target < nums[end]
-        } else {
-            if(target > nums[mid] && target <= nums[end]) {
-                //larger that mid, so increase the start number
-                start = mid + 1;
-            } else {
-                //otherwise narrowing down
-                end = mid - 1;
-            }
-        }
+  let left = 0;
+  let right = nums.length - 1;
+    
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    
+    if (nums[mid] === target) {
+      return mid;
     }
-    return -1;
+    
+    // When dividing the roated array into two halves, one must be sorted.
+    
+    // Check if the left side is sorted
+    if (nums[left] <= nums[mid]) {
+      if (nums[left] <= target && target <= nums[mid]) {
+        // target is in the left
+        right = mid - 1;
+        
+      } else {
+        // target is in the right
+        left = mid + 1;
+      }
+    } 
+    
+    // Otherwise, the right side is sorted
+    else {
+      if (nums[mid] <= target && target <= nums[right]) {
+        // target is in the right
+        left = mid + 1;
+
+      } else {
+        // target is in the left
+        right = mid - 1;
+      }
+    }
+    
+    
+  }
+    
+  return -1;
 };
 ```
